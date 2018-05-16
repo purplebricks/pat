@@ -1,0 +1,48 @@
+name: Pat
+
+license:
+    software: Apache License 2.0
+    software_url: https://choosealicense.com/licenses/apache-2.0/
+
+links:
+    header:
+      - title: GitHub
+        url: https://github.com/Purplebricks/pat
+      - title: PB Tech Blog
+        url: http://purplebricks.io
+    footer:
+      - title: GitHub
+        url: https://github.com/Purplebricks/pat
+      - title: Issues
+        url: https://github.com/Purplebricks/pat/issues?state=open
+      - title: PB Tech Blog
+        url: http://purplebricks.io
+
+ui:
+    header:
+        color1: "#080331"
+        color2: "#673051"
+        trianglify: true
+
+social:
+    github:
+        user: Purplebricks
+        repo: pat
+    twitter:
+        enabled: false
+        via:
+        hash:
+        account:
+    facebook:
+        enabled: false
+        profileUrl:
+
+analytics:
+    google: UA-119401415-1
+
+# Build settings
+markdown: kramdown
+theme: jekyll-docs-theme
+exclude:
+    - Gemfile
+    - Gemfile.lock

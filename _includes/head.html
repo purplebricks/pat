@@ -1,0 +1,43 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.name | escape }}{% endif %}</title>
+<meta name="description"
+      content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ "/assets/css/docs.css"   | relative_url }}">
+<link rel="stylesheet" href="{{ "/assets/css/styles.css" | relative_url }}">
+
+<link rel="canonical" href="{{ page.url | replace: 'index.html', '' | absolute_url }}">
+<link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}">
+
+<style>
+    #jumbotron-header {
+        background: {{ site.ui.header.color1 }};
+        background: linear-gradient(135deg, {{ site.ui.header.color1 }}, {{ site.ui.header.color2 }});
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stickyfill/1.1.4/stickyfill.min.js"></script>
+<script src="{{ '/assets/js/docs.min.js' | relative_url }}"></script>
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://www.purplebricks.co.uk/apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.purplebricks.co.uk/apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.purplebricks.co.uk/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.purplebricks.co.uk/apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.purplebricks.co.uk/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.purplebricks.co.uk/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.purplebricks.co.uk/apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.purplebricks.co.uk/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.purplebricks.co.uk/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" href="https://www.purplebricks.co.uk/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://www.purplebricks.co.uk/android-chrome-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="https://www.purplebricks.co.uk/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="https://www.purplebricks.co.uk/favicon-16x16.png" sizes="16x16">
+<meta name="msapplication-TileColor" content="#550099">
+<meta name="msapplication-TileImage" content="https://www.purplebricks.co.uk/mstile-144x144.png">
+<meta name="theme-color" content="#550099">
