@@ -11,9 +11,9 @@ These guides should be enough to get you up and running.
 
 ## Starter Guides
 
-These are the 101 guides, you'll want to have a read of these as you are exploring the API.
+These are the 101 guides, you'll want to have a read of these as you're exploring the API.
 
- - [Hello World](hello-world.html) - A guide to creating your very first pub.sub app with Pat.
+ - [Hello World](hello-world.html) - A guide to creating your very first pub/sub app with Pat.
  - [Encrypted Messages](encrypted-messages) - How to send and receive encrypted messages through Pat.
  - [Rate Limiting](rate-limiting.html) - How to rate limit your subscriber.
 
