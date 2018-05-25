@@ -12,5 +12,5 @@ title: Pat.Sender
 
 # Pat.Sender
 
-If you haven't already, please start with the [getting started](getting-started.html) guide before reading this.
+If you haven't already, please start with the [getting started](/docs/) guide before reading this.
 
