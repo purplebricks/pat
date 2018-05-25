@@ -14,3 +14,10 @@ title: Pat.Sender
 
 If you haven't already, please start with the [getting started](/docs/) guide before reading this.
 
+## Message Properties
+Message Headers
+Synthetic Messages
+
+
+## Correlation Id Provider
+Explain the various types and why here.
