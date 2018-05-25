@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pat.Subscriber" Version="1.0.4" />
-    <PackageReference Include="Pat.Subscriber.NetCoreDependencyResolution" Version="1.0.4" />
+    <PackageReference Include="Pat.Subscriber" Version="1.0.9" />
+    <PackageReference Include="Pat.Subscriber.NetCoreDependencyResolution" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Pat.Subscriber.Tools" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
