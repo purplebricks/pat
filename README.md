@@ -1,3 +1,3 @@
 # Pat Documentation
 
-Hosted at [http://purplebricks.io/pat/](http://purplebricks.io/pat/)
+Hosted at [https://purplebricks.io/pat/](https://purplebricks.io/pat/)

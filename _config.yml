@@ -9,14 +9,14 @@ links:
       - title: GitHub
         url: https://github.com/Purplebricks/pat
       - title: PB Tech Blog
-        url: http://purplebricks.io
+        url: https://purplebricks.io
     footer:
       - title: GitHub
         url: https://github.com/Purplebricks/pat
       - title: Issues
         url: https://github.com/Purplebricks/pat/issues?state=open
       - title: PB Tech Blog
-        url: http://purplebricks.io
+        url: https://purplebricks.io
 
 ui:
     header:
