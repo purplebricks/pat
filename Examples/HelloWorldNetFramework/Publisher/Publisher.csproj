@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Pat.Subscriber.Tools" Version="*" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <ProjectReference Include="..\Contract\Contract.csproj" />
   </ItemGroup>
 

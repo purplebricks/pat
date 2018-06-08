@@ -10,10 +10,6 @@
     <PackageReference Include="Pat.Sender" Version="2.0.11" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="Pat.Subscriber.Tools" Version="*" />
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Contract\Contract.csproj" />
