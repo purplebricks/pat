@@ -24,7 +24,7 @@ dotnet tool install -g Pat.Subscriber.Tools
 
 ## Usage
 
-Open a terminal and run `pat --help`. The pat tooling has a built in help which should help you run the tool.
+Open a terminal and run `pat --help`. The Pat tooling has a built in help which should help you run the tool.
 
 ### Example Use
 To create a developer subscription on the pat topic you can run:

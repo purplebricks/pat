@@ -75,7 +75,7 @@ public Task HandleAsync(Foo @event)
 Now that we have a fully functional handler in place, so  we need to hook up the infrastructure to support it.
 
 Setting up a new subscriber without dependency resolution is entirely possible, but not recommended. Instead 
-create a new method `private static ServiceProvider InitialiseIoC()` in this we need to create he dependency 
+create a new method `private static ServiceProvider InitialiseIoC()` in this we need to create the dependency 
 configuration for our subscriber. For this example we can use:
 
 ```
@@ -111,7 +111,7 @@ required in the future. Details on the statistics reporter are provided in the [
 documentation.
 
 The `.AddPatLite` helper method configures the service collection for the Pat subscriber and its dependencies, 
-the `.AddHandlersFromAssemblyContainingType` tells pat where to find the handlers in our app. If we have 
+the `.AddHandlersFromAssemblyContainingType` tells Pat where to find the handlers in our app. If we have 
 handlers split across multiple projects we'll need to call this method multiple times. 
 
 ## Configuring Logging
@@ -195,7 +195,7 @@ Now that our subscriber is complete we need to create a subscription on our serv
 manually or via a tool. The [pat](pat-subscriber-tools.html) global tool does this for us. The tool requires
 that .Net Core 2.1.300 is installed.
 
-To install the pat tooling run:
+To install the Pat tooling run:
 
 ```
 dotnet tool install -g Pat.Subscriber.Tools
@@ -280,7 +280,7 @@ private static void InitLogger()
 }
 ```
 
-## Brining it all together
+## Bringing it all together
 
 First we need to convert our Main methods signature to `async Task Main()`, for this we’ll need to enable C# 
 7.1. This can be done by adding `<LangVersion>7.1</LangVersion>` to the `<PropertyGroup>` section in our 
