@@ -29,17 +29,17 @@ Open a terminal and run `pat --help`. The pat tooling has a built in help which 
 ### Example Use
 To create a developer subscription on the pat topic you can run:
 ```
-pat create -n mailmachinegun-ns -s MySubscription -t pat -d
+pat create -n mynamespace -s MySubscription -t pat -d
 ```
 
 To create a deployed  subscription on the pat topic you can run:
 ```
-pat create -n mailmachinegun-ns -s MySubscription -t pat
+pat create -n mynamespace -s MySubscription -t pat
 ```
 
 If you need to run this from a non interactive environment you will need to provide details for a service principal. This can be done as follows:
 ```
-pat create -n mailmachinegun-ns -s MySubscription -t pat -ci f44002f7-3843-453f-909e-efca3270ab6c -cs "correct horse battery staple" -ti 6965c8e5-c907-4361-905f-bba34a3b442a
+dotnet pat create -n mynamespace -s MySubscription -t pat -ci f44002f7-3843-453f-909e-efca3270ab6c -cs "correct horse battery staple" -ti 6965c8e5-c907-4361-905f-bba34a3b442a
 ```
 
 Where `f44002f7-3843-453f-909e-efca3270ab6c` is the identifier for a service principal with appropriate permissions on your tenant with id `6965c8e5-c907-4361-905f-bba34a3b442a`
