@@ -192,20 +192,19 @@ await subscriber.ListenForMessages(tokenSource);
 ## Creating the Subscription
 
 Now that our subscriber is complete we need to create a subscription on our service bus. This can be done 
-manually or via a tool. The [dotnet pat](pat-subscriber-tools.html) cli tool does this for us. 
+manually or via a tool. The [pat](pat-subscriber-tools.html) global tool does this for us. The tool requires
+that .Net Core 2.1.300 is installed.
 
-To install the dotnet tooling into a project add the following to a projects `.csproj` file:
-
-```
-<ItemGroup>
-  <DotNetCliToolReference Include="Pat.Subscriber.Tools" Version="*" />
-</ItemGroup>
-```
-
-With a command prompt open in the same folder as our subscriber csproj we can execute the command: 
+To install the pat tooling run:
 
 ```
-dotnet pat create -n namespace -s PatExampleSubscriber -t pat
+dotnet tool install -g Pat.Subscriber.Tools
+```
+
+Then in our prompt run (note some prompts need reopening before `pat` is available): 
+
+```
+pat create -n namespace -s PatExampleSubscriber -t pat
 ```
 
 We need to replace `namespace` with the service bus namespace from our connection string.
