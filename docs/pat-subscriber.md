@@ -14,7 +14,7 @@ title: Pat.Subscriber
 
 This is the subscriber, it's responsibility it is to listen for messages (events and command) on its subscription.
 
-If you haven't already, please start with the [getting started](/docs/) guide before reading this.
+If you haven't already, please start with the [getting started](https://purplebricks.io/pat/docs/) guide before reading this.
 
 ## SubscriberConfiguration
 
