@@ -348,7 +348,7 @@ From this we can see that the subscriber has successfully received and processed
 # Next Steps
 
 Now we have a working publisher and subscriber. It's worth reading through the other topics on the [getting 
-started](getting-started.html) guide to help you build out a production read subscriber.
+started](getting-started.html) guide to help you build out a production ready subscriber.
 
 # Troubleshooting
 
