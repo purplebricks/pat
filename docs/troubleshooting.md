@@ -13,6 +13,14 @@ This can happen in a when a .Net Core subscriber is missing an appropriate call 
 `.AddHandlersFromAssemblyContainingType` in its dependency resolution configuration.
 
 
+"System.InvalidOperationException: subscriber <SubscriberName> does not have a filter for message type 
+'<MessageType>'"
+
+This happens when the subscriber receives a message for an event which does have a corresponding handler. This 
+can happen if the subscriptions filter did not match the subscriber at startup. The filter is set at startup,
+so no new additional message would be added to the subscription. However, pre-existing message stay in the 
+subscription and need to be removed.
+
 # Pat.Subscriber.Tools
 
 "Response status code does not indicate success: 409 (Conflict)."
