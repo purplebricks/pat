@@ -39,7 +39,7 @@ namespace Subscriber
 
         private static ServiceProvider InitialiseIoC()
         {
-            var connection = "Endpoint=sb://***REMOVED***.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=***REMOVED***";
+            var connection = "Endpoint=sb://namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=YOURKEY";
             var topicName = "pat";
 
             var subscriberConfiguration = new SubscriberConfiguration
