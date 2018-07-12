@@ -50,15 +50,30 @@ namespace Subscriber
 
             InitLogger();
 
-            var circuitBreakerOptions =
-                new CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions(30,
-                    ex => ex is ExternalProviderOfflineException);
-
             var patLiteOptions = new PatLiteOptionsBuilder(subscriberConfiguration)
-                .UseDefaultPipelinesWithCircuitBreaker(circuitBreakerOptions)
+                .UseDefaultPipelinesWithCircuitBreaker(s => s.GetService<CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions>())
                 .Build();
 
             var serviceProvider = new ServiceCollection()
+                .AddSingleton(provider => new CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions(30,
+                    ex => ex is ExternalProviderOfflineException)
+                {
+                    CircuitBroken = (sender, args) =>
+                    {
+                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
+                        monitoring.CircuitBroken();
+                    },
+                    CircuitReset = (sender, args) =>
+                    {
+                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
+                        monitoring.CircuitReset();
+                    },
+                    CircuitTest = (sender, args) =>
+                    {
+                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
+                        monitoring.CircuitTest();
+                    }
+                })                    
                 .AddPatLite(patLiteOptions)
                 .AddTransient(s => LogManager.GetLogger(s.GetType()))
                 .AddTransient<IStatisticsReporter, StatisticsReporter>()
