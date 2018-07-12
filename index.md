@@ -19,3 +19,5 @@ Pat is constructed from a few working pieces. If you've been through the getting
  - [Pat.Sender.DataProtectionEncryption](docs/pat-sender-dataprotectionencryption.html)
  - [Pat.DataProtection](docs/pat-dataprotection.html)
  - [Pat.Sender](docs/pat-sender.html)
+
+If you have any questions, please come and ask in [our slack workspace](https://slack.com/app_redirect?channel=CBQGJKP8X).
