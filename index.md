@@ -2,7 +2,6 @@
 layout: page
 homepage: true
 description: Pat is an easy to use pub/sub wrapper for the azure service bus.
-sort: 0
 ---
 
 # Overview

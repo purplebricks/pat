@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 1
 title: Pat.Sender
 ---
 

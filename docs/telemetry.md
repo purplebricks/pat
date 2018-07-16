@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 6
 title: Telemetry
 ---
 

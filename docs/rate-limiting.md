@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 4
 title: Rate Limiting
 ---
 

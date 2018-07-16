@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 7
 title: Logging
 ---
 

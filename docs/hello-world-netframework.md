@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 2
 title: Hello World - .Net Framework
 ---
 

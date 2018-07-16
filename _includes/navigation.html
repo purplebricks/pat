@@ -11,8 +11,7 @@
         </div>
         <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
-                {% assign sorted_pages = site.pages | sort: "sort" %}
-                {% for p in sorted_pages %}
+                {% for p in site.pages %}
                     {% if p.homepage != true and p.includeinnav == true and p.title !=  %}
                         <li {% if page.title == p.title %}class="active"{% endif %}>
                             <a href="{{ p.url | relative_url }}">{{ p.title }}</a>

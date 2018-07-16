@@ -1,7 +1,6 @@
 ---
 layout: page
 homepage: false
-sort: 3
 title: Encrypted Messages
 ---
 
