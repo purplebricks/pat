@@ -7,12 +7,12 @@ using Pat.Subscriber.MessageProcessing;
 
 namespace Subscriber
 {
-    internal class PoisonMessageProcessingBehaviour : IMessageProcessingBehaviour
+    internal class NonTransientMessageFailureProcessingBehaviour : IMessageProcessingBehaviour
     {
         private readonly ILog _log;
         private readonly SubscriberConfiguration _config;
 
-        public PoisonMessageProcessingBehaviour(ILog log, SubscriberConfiguration config)
+        public NonTransientMessageFailureProcessingBehaviour(ILog log, SubscriberConfiguration config)
         {
             _log = log;
             _config = config;
@@ -31,7 +31,6 @@ namespace Subscriber
                 var correlationId = GetCollelationId(message);
                 await messageContext.MessageReceiver.DeadLetterAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
                 _log.Warn($"{ex.GetType()}: message deadlettered. `{messageType}` correlation id `{correlationId}` on subscriber `{_config.SubscriberName}`.", ex);
-
             }
         }
 
