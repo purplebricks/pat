@@ -3,7 +3,6 @@ layout: page
 homepage: false
 sort: 2
 title: Hello World - .Net Framework
-hide: true
 ---
 
 tl;dr - There is a complete example here [Examples/HelloWorldNetFramework](https://github.com/purplebricks/pat/tree/master/Examples/HelloWorldNetFramework)

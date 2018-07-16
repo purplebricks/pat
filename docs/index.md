@@ -1,6 +1,7 @@
 ---
 layout: page
 homepage: false
+includeinnav: true
 sort: 1
 title: Getting Started
 ---

@@ -3,6 +3,7 @@ layout: page
 homepage: false
 sort: 8
 title: Troubleshooting
+includeinnav: true
 ---
 
 # Pat.Subscriber

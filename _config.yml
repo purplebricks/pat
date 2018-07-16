@@ -8,13 +8,15 @@ links:
     header:
       - title: GitHub
         url: https://github.com/Purplebricks/pat
+      - title: Slack
+        url: https://slack.com/app_redirect?channel=CBQGJKP8X
       - title: PB Tech Blog
         url: https://purplebricks.io
     footer:
       - title: GitHub
         url: https://github.com/Purplebricks/pat
-      - title: Issues
-        url: https://github.com/Purplebricks/pat/issues?state=open
+      - title: Slack
+        url: https://slack.com/app_redirect?channel=CBQGJKP8X
       - title: PB Tech Blog
         url: https://purplebricks.io
 

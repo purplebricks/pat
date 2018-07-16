@@ -13,7 +13,7 @@
             <ul class="nav navbar-nav">
                 {% assign sorted_pages = site.pages | sort: "sort" %}
                 {% for p in sorted_pages %}
-                    {% if p.homepage != true and p.hide != true and p.title !=  %}
+                    {% if p.homepage != true and p.includeinnav == true and p.title !=  %}
                         <li {% if page.title == p.title %}class="active"{% endif %}>
                             <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
                         </li>
