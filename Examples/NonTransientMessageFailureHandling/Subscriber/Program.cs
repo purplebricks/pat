@@ -52,7 +52,6 @@ namespace Subscriber
 
             var patLiteOptions = new PatLiteOptionsBuilder(subscriberConfiguration)
                 .DefineMessagePipeline
-                    .With<DefaultMessageProcessingBehaviour>()
                     .With<NonTransientMessageFailureProcessingBehaviour>()
                     .With<MonitoringMessageProcessingBehaviour>()
                     .With<InvokeHandlerBehaviour>()
