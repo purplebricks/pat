@@ -57,21 +57,20 @@ if it throws an exception then the message is simply dropped by Pat. The azure  
 message until the peek lock expires and the message will be received again by Pat. This will repeat until
 the max delivery count has exceeded, at which point the message is moved onto the dead letter queue.
 
-To show that our handler is receiving messages let's add some logging. Pat has a dependency on log4net, so for
-convenience let's use that. Add a new constructor with a parameter `ILog log` to our handler, assign that to 
+To show that our handler is receiving messages let's add some logging. Pat has a dependency on .NET Core Logging (`Microsoft.Extensions.Logging`). Add a new constructor with a parameter `ILogger log` to our handler, assign that to 
 an instance variable called `_log`. Now update our `HandleAsync` method to the following.
 
 ```
 public Task HandleAsync(Foo @event)
 {
-    _log.Info($"Handling: {@event}");
+    _log.LogInformation($"Handling: {@event}");
     return Task.CompletedTask;
 }
 ```
 
 ## Configuring the Subscribers Dependency Resolution
 
-Now that we have a fully functional handler in place, so  we need to hook up the infrastructure to support it.
+Now that we have a fully functional handler in place, we need to hook up the infrastructure to support it.
 
 Setting up a new subscriber without dependency resolution is entirely possible, but not recommended. Instead 
 create a new method `private static ServiceProvider InitialiseIoC()` in this we need to create the dependency 
@@ -97,6 +96,8 @@ sensible defaults for us. The simplest setup available setup is:
 ```
 var serviceProvider = new ServiceCollection()
     .AddPatLite(subscriberConfiguration)
+    .AddDefaultPatLogger()
+    .AddLogging(b => b.AddConsole())
     .AddTransient<IStatisticsReporter, StatisticsReporter>()
     .AddSingleton(new StatisticsReporterConfiguration())
     .AddHandlersFromAssemblyContainingType<FooHandler>()
@@ -115,34 +116,9 @@ handlers split across multiple projects we'll need to call this method multiple 
 
 ## Configuring Logging
 
-Pat uses log4net for its internal logging, to help visualize what's happening it's useful to add a console 
-appender for log4Net. To do this add `.AddTransient(s => LogManager.GetLogger(s.GetType()))` to our service 
-collection setup. Create a new method `InitLogger` (below) and call the method from our `InitialiseIoC` 
-before the setup of our service provider. We can now see what Pat is doing internally.
+Pat uses .NET Core Logging for its internal logging, to help visualize what's happening it's useful to add a console provider.
 
-```
-private static void InitLogger()
-{
-    var hierarchy = (Hierarchy)LogManager.GetRepository(Assembly.GetExecutingAssembly());
-    var tracer = new TraceAppender();
-    var patternLayout = new PatternLayout();
-
-    patternLayout.ConversionPattern = "%d [%t] %-5p %m%n";
-    patternLayout.ActivateOptions();
-
-    tracer.Layout = patternLayout;
-    tracer.ActivateOptions();
-    hierarchy.Root.AddAppender(tracer);
-
-    var appender = new ConsoleAppender();
-    appender.Layout = patternLayout;
-    appender.ActivateOptions();
-    hierarchy.Root.AddAppender(appender);
-
-    hierarchy.Root.Level = Level.All;
-    hierarchy.Configured = true;
-}
-```
+In the above IoC setup, the `.AddLogging(b => b.AddConsole())` line is configuring .NET Core Logging to provide a Console log.  The `.AddDefaultPatLogger()` line is provided for convenience and registers an implementation of `ILogger` with a category name of "Pat" to write to the providers that have been registered (e.g. here, the Console).
 
 ## Bringing it all together.
 
@@ -172,8 +148,8 @@ may take longer. This is done by adding the following to our main method:
 var tokenSource = new CancellationTokenSource();
 Console.CancelKeyPress += (sender, args) =>
 {
-    var log = serviceProvider.GetService<ILog>();
-    log.Info("Subscriber Shutdown Requested");
+    var log = serviceProvider.GetService<ILogger>();
+    log.LogInformation("Subscriber Shutdown Requested");
     args.Cancel = true;
     tokenSource.Cancel();
 };
@@ -236,7 +212,7 @@ interface which we will use in our application. The concrete implementation of t
 [MessageSender](pat-sender.html#message-sender), a [MessageGenerator](pat-sender.html#message-generator), 
 [MessageProperties](pat-sender.html#message-properties) and [correlation 
 ids](pat-sender.html#correlation-id-provider). The details of which are explained on their specific 
-documentation pages. The simplest setup available is:
+documentation pages. The simplest setup available is below (but please add logging as described in the next few sections):
 
 ```
 var serviceProvider = new ServiceCollection()
@@ -250,9 +226,25 @@ var serviceProvider = new ServiceCollection()
 return serviceProvider;
 ```
 
-Pat uses log4net for its internal logging, to help visualize what's happening it's useful to add a console 
-appender for log4Net. To do this add `.AddTransient(s => LogManager.GetLogger(s.GetType()))` to our service 
-collection setup. Create a new method `InitLogger` (below) and call the method from our `InitialiseIoC` before 
+### Using .NET Core Logging in the Publisher
+For .NET Core Logging, reference the `Pat.Sender.NetCoreLogAdapter` package, and a .NET Core Logging package such as `Microsoft.Extensions.Logging.Console`.  .NET Core Logging can then be set up as normal to provide an ILogger instance.
+
+Example:
+```
+.AddSingleton<IPatSenderLog, PatSenderNetCoreLogAdapter>()
+.AddLogging(b => b.AddConsole())
+.AddSingleton<ILogger>(s => s.GetRequiredService<ILoggerFactory>().CreateLog("Publisher"))
+```
+
+### Using log4Net in the Publisher instead
+For log4net logging, reference the `Pat.Sender.Log4Net` package and add IoC setup:
+
+```
+.AddSingleton<IPatSenderLog, PatSenderLog4NetAdapter>()
+.AddTransient(s => LogManager.GetLogger(s.GetType()))
+```
+
+It can be useful to add a console logger to visualize what's happening.  Create a new method `InitLogger` (below) and call the method from the IoC setup before 
 the setup of our service provider. We can now see what Pat is doing internally.
 
 ```

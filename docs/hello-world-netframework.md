@@ -52,14 +52,13 @@ if it throws an exception then the message is simply dropped by Pat. The azure  
 message until the peek lock expires and the message will be received again by Pat. This will repeat until
 the max delivery count has exceeded, at which point the message is moved onto the dead letter queue.
 
-To show that our handler is receiving messages let's add some logging. Pat has a dependency on log4net, so for
-convenience let's use that. Add a new constructor with a parameter `ILog log` to our handler, assign that to 
+To show that our handler is receiving messages let's add some logging. Pat has a dependency on .NET Core Logging (`Microsoft.Extensions.Logging`). Add a new constructor with a parameter `ILogger log` to our handler, assign that to 
 an instance variable called `_log`. Now update our `HandleAsync` method to the following.
 
 ```
 public Task HandleAsync(Foo @event)
 {
-    _log.Info($"Handling: {@event}");
+    _log.LogInformation($"Handling: {@event}");
     return Task.CompletedTask;
 }
 ```
@@ -100,6 +99,7 @@ var container = new Container(x =>
     x.AddRegistry(new PatLiteRegistryBuilder(subscriberConfiguration).Build());
     
     x.For<IStatisticsReporter>().Use(new StatisticsReporter(new StatisticsReporterConfiguration()));
+    x.For<IPatSenderLog>().Use<PatSenderLog4NetAdapter>();
 });
 
 return container;
@@ -114,7 +114,11 @@ the `scanner.WithDefaultConventions();` tells StructureMap and therefore Pat whe
 app. If we have handlers split across multiple projects we'll need to tell StructureMap about them. The 
 [StructureMap documentation](http://structuremap.github.io/quickstart/) covers that in more detail.
 
-Pat uses log4net for its internal logging, to help visualize what's happening it's useful to add a console 
+The line for `IPatSenderLog` plugs in log4net as a logger, make sure to reference the `Pat.Sender.Log4Net` package and register your log4net `ILog` type as per below.
+
+N.B. For an example that uses .NET Core Logging, see [Hello World - .Net Core](hello-world-dotnetcore.html).
+
+This example uses log4net for Pat's internal logging.  To help visualize what's happening it's useful to add a console 
 appender for log4Net. To do this add `x.For<ILog>().Use(context => LogManager.GetLogger(context.ParentType));` 
 to our container setup. Create a new method `InitLogger` (below) and call the method from our `InitialiseIoC` before 
 the setup of our service provider. We can now see what Pat is doing internally.
