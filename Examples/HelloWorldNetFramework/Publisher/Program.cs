@@ -10,6 +10,7 @@ using log4net.Repository.Hierarchy;
 using StructureMap;
 using Pat.Sender;
 using Pat.Sender.Correlation;
+using Pat.Sender.Log4Net;
 
 namespace Publisher
 {
@@ -48,6 +49,7 @@ namespace Publisher
 
                 x.For<ICorrelationIdProvider>().Use(new LiteralCorrelationIdProvider($"{Guid.NewGuid()}"));
                 x.For<PatSenderSettings>().Use(sender);
+                x.For<IPatSenderLog>().Use<PatSenderLog4NetAdapter>();
                 x.For<ILog>().Use(context => LogManager.GetLogger(context.ParentType));
             });
 
