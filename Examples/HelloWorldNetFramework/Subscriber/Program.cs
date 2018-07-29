@@ -2,11 +2,8 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using log4net;
-using log4net.Appender;
-using log4net.Core;
-using log4net.Layout;
-using log4net.Repository.Hierarchy;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Pat.Subscriber;
 using Pat.Subscriber.StructureMap4DependencyResolution;
 using Pat.Subscriber.Telemetry.StatsD;
@@ -23,8 +20,8 @@ namespace Subscriber
             var tokenSource = new CancellationTokenSource();
             Console.CancelKeyPress += (sender, args) =>
             {
-                var log = serviceProvider.GetInstance<ILog>();
-                log.Info("Subscriber Shutdown Requested");
+                var log = serviceProvider.GetInstance<ILogger>();
+                log.LogInformation("Subscriber Shutdown Requested");
                 args.Cancel = true;
                 tokenSource.Cancel();
             };
@@ -47,8 +44,6 @@ namespace Subscriber
                 UseDevelopmentTopic = false
             };
 
-            InitLogger();
-
             var container = new Container(x =>
             {
                 x.Scan(scanner =>
@@ -56,35 +51,15 @@ namespace Subscriber
                     scanner.WithDefaultConventions();
                 });
 
-                x.AddRegistry(new PatLiteRegistryBuilder(subscriberConfiguration).Build());
+                x.AddRegistry(new PatLiteRegistryBuilder(subscriberConfiguration)
+                    .WithDefaultPatLogger()
+                    .Build());
                 
                 x.For<IStatisticsReporter>().Use(new StatisticsReporter(new StatisticsReporterConfiguration()));
-                x.For<ILog>().Use(context => LogManager.GetLogger(context.ParentType));
+                x.For<ILoggerFactory>().Use(context => new LoggerFactory().AddConsole());
             });
 
             return container;
-        }
-
-        private static void InitLogger()
-        {
-            var hierarchy = (Hierarchy)LogManager.GetRepository(Assembly.GetExecutingAssembly());
-            var tracer = new TraceAppender();
-            var patternLayout = new PatternLayout();
-
-            patternLayout.ConversionPattern = "%d [%t] %-5p %m%n";
-            patternLayout.ActivateOptions();
-
-            tracer.Layout = patternLayout;
-            tracer.ActivateOptions();
-            hierarchy.Root.AddAppender(tracer);
-
-            var appender = new ConsoleAppender();
-            appender.Layout = patternLayout;
-            appender.ActivateOptions();
-            hierarchy.Root.AddAppender(appender);
-
-            hierarchy.Root.Level = Level.All;
-            hierarchy.Configured = true;
         }
     }
 }

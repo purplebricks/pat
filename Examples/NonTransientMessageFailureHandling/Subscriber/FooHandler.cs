@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Contract;
-using log4net;
+using Microsoft.Extensions.Logging;
 using Pat.Subscriber;
 
 namespace Subscriber
 {
     public class FooHandler : IHandleEvent<Foo>
     {
-        private readonly ILog _log;
+        private readonly ILogger _log;
 
-        public FooHandler(ILog log)
+        public FooHandler(ILogger log)
         {
             _log = log;
         }
 
         public Task HandleAsync(Foo @event)
         {
-            _log.Info($"Handling: {@event}");
+            _log.LogInformation($"Handling: {@event}");
             if (DateTime.UtcNow.Minute % 3 == 0)
             {
                 throw new SampleTransientException();

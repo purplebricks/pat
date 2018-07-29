@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Contract;
-using log4net;
+using Microsoft.Extensions.Logging;
 using Pat.Subscriber;
 
 namespace Subscriber
 {
     public class FooHandler : IHandleEvent<Foo>
     {
-        private readonly ILog _log;
+        private readonly ILogger _logger;
 
-        public FooHandler(ILog log)
+        public FooHandler(ILogger logger)
         {
-            _log = log;
+            _logger = logger;
         }
 
         public Task HandleAsync(Foo @event)
         {
-            _log.Info($"Handling: {@event}");
+            _logger.LogInformation($"Handling: {@event}");
             if (DateTime.UtcNow.Minute % 5 == 0)
             {
                 throw new ExternalProviderOfflineException();
