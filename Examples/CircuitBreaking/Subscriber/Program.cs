@@ -44,39 +44,36 @@ namespace Subscriber
                 UseDevelopmentTopic = false
             };
 
-            var patLiteOptions = new PatLiteOptionsBuilder(subscriberConfiguration)
-                .UseDefaultPipelinesWithCircuitBreaker(s => s.GetService<CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions>())
+            var patOptions = new PatLiteOptionsBuilder(subscriberConfiguration)
+                .UseDefaultPipelinesWithCircuitBreaker(
+                    sp =>
+                    {
+                        var monitoring = sp.GetRequiredService<CircuitBreakerMonitoring>();
+                        return new CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions(
+                            circuitTestIntervalInSeconds: 30,
+                            shouldCircuitBreak: IsCircuitBreakingException)
+                        {
+                            CircuitBroken = (sender, args) => monitoring.CircuitBroken(),
+                            CircuitReset = (sender, args) => monitoring.CircuitReset(),
+                            CircuitTest = (sender, args) => monitoring.CircuitTest()
+                        };
+                    })
                 .Build();
 
             var serviceProvider = new ServiceCollection()
-                .AddSingleton(provider => new CircuitBreakerBatchProcessingBehaviour.CircuitBreakerOptions(30,
-                    ex => ex is ExternalProviderOfflineException)
-                {
-                    CircuitBroken = (sender, args) =>
-                    {
-                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
-                        monitoring.CircuitBroken();
-                    },
-                    CircuitReset = (sender, args) =>
-                    {
-                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
-                        monitoring.CircuitReset();
-                    },
-                    CircuitTest = (sender, args) =>
-                    {
-                        var monitoring = provider.GetService<CircuitBreakerMonitoring>();
-                        monitoring.CircuitTest();
-                    }
-                })
-                .AddPatLite(patLiteOptions)
+                .AddPatLite(patOptions)
                 .AddDefaultPatLogger()
                 .AddLogging(b => b.AddConsole())
                 .AddTransient<IStatisticsReporter, StatisticsReporter>()
                 .AddSingleton(new StatisticsReporterConfiguration())
                 .AddHandlersFromAssemblyContainingType<FooHandler>()
+                .AddSingleton<CircuitBreakerMonitoring>()
                 .BuildServiceProvider();
 
             return serviceProvider;
         }
+
+        private static bool IsCircuitBreakingException(Exception exception)
+            => exception is ExternalProviderOfflineException;
     }
 }
