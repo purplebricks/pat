@@ -19,4 +19,4 @@ Pat is constructed from a few working pieces. If you've been through the getting
  - [Pat.DataProtection](docs/pat-dataprotection.html)
  - [Pat.Sender](docs/pat-sender.html)
 
-If you have any questions, please come and ask in [our slack workspace](https://slack.com/app_redirect?channel=CBQGJKP8X).
+If you have any questions, please come and ask in [our slack workspace](https://join.slack.com/t/opensource-pbtech/shared_invite/enQtNDM0NzM2NjYwMzIyLTY1ZWIyODkxZmRhNjJiZjI2MTA5OGM2Nzk2MTIwMjI3YTJmNmIxMDZhM2RiOTM1YjQ0NDRjZDFiZDU4YmEwNjE).
