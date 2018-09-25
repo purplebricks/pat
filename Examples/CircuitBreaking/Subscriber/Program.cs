@@ -62,7 +62,6 @@ namespace Subscriber
 
             var serviceProvider = new ServiceCollection()
                 .AddPatLite(patOptions)
-                .AddDefaultPatLogger()
                 .AddLogging(b => b.AddConsole())
                 .AddTransient<IStatisticsReporter, StatisticsReporter>()
                 .AddSingleton(new StatisticsReporterConfiguration())

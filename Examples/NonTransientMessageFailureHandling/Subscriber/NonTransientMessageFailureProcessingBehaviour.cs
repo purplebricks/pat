@@ -11,7 +11,7 @@ namespace Subscriber
         private readonly ILogger _log;
         private readonly SubscriberConfiguration _config;
 
-        public NonTransientMessageFailureProcessingBehaviour(ILogger log, SubscriberConfiguration config) : base(log, config)
+        public NonTransientMessageFailureProcessingBehaviour(ILogger<NonTransientMessageFailureProcessingBehaviour> log, SubscriberConfiguration config) : base(log, config)
         {
             _log = log;
             _config = config;
