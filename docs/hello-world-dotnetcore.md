@@ -122,7 +122,7 @@ In the above IoC setup, the `.AddLogging(b => b.AddConsole())` line is configuri
 
 ## Bringing it all together.
 
-First we need to convert our Main methods signature to `async Task Main()`, for this we'll need to enable C# 
+First we need to convert our Main method's signature to `async Task Main()`, for this we'll need to enable C# 
 7.1. This can be done by adding `<LangVersion>7.1</LangVersion>` to the `<PropertyGroup>` section in our 
 subscriber's csproj file.
 
@@ -188,7 +188,7 @@ We need to replace `namespace` with the service bus namespace from our connectio
 
 Publishing a message with Pat is somewhat simpler than subscribing to messages.
 
-We need to start by installing the latest versions of `Pat.Publisher` and 
+We need to start by installing the latest versions of `Pat.Sender` and 
 `Microsoft.Extensions.DependencyInjection`.
 
 ## Configuring the Publishers Dependency Resolution
@@ -273,7 +273,7 @@ private static void InitLogger()
 
 ## Bringing it all together
 
-First we need to convert our Main methods signature to `async Task Main()`, for this we’ll need to enable C# 
+First we need to convert our Main method's signature to `async Task Main()`, for this we’ll need to enable C# 
 7.1. This can be done by adding `<LangVersion>7.1</LangVersion>` to the `<PropertyGroup>` section in our 
 subscriber’s csproj file.
 
