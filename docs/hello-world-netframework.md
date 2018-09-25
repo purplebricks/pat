@@ -28,6 +28,8 @@ Firstly create 3 projects, each targeting .NET Framework 4.7. The first should b
 Add a new class to the `Contract` project, call it `Foo`, for now this doesn't need any properties. For a 
 real event we would have something a bit more meaningful. 
 
+# Building the Subscriber
+
 We need to start by installing the latest versions of `Pat.Subscriber` and 
 `Pat.Subscriber.StructureMap4DependencyResolution`, once they are installed we can build our event handler.
 
@@ -68,7 +70,7 @@ public Task HandleAsync(Foo @event)
 Now that we have a fully functional handler in place, so  we need to hook up the infrastructure to support it.
 
 Setting up a new subscriber without dependency resolution is entirely possible, but not recommended. Instead 
-create a new method `private static ServiceProvider InitialiseIoC()` in this we need to create the dependency 
+create a new method `private static Container InitialiseIoC()` in this we need to create the dependency 
 configuration for our subscriber. For this example we can use:
 
 ```
@@ -85,10 +87,16 @@ var subscriberConfiguration = new SubscriberConfiguration
 };
 ```
 
-For our IoC Pat provides the a structure map registry with sensible defaults. The simplest setup available 
+At this point you need to install StructureMap.Microsoft.DependencyInjection, our IoC Pat provides the structure map registry with sensible defaults. The simplest setup available 
 setup is:
 
 ```
+var services = new ServiceCollection()
+    .AddPatLite(subscriberConfiguration)
+    .AddDefaultPatLogger()
+    .AddLogging(b => b.AddConsole());
+    .AddHandlersFromAssemblyContainingType<FooHandler>();
+
 var container = new Container(x =>
 {
     x.Scan(scanner =>
@@ -96,10 +104,10 @@ var container = new Container(x =>
         scanner.WithDefaultConventions();
     });
 
-    x.AddRegistry(new PatLiteRegistryBuilder(subscriberConfiguration).Build());
-    
+    x.Populate(services);
+
     x.For<IStatisticsReporter>().Use(new StatisticsReporter(new StatisticsReporterConfiguration()));
-    x.For<IPatSenderLog>().Use<PatSenderLog4NetAdapter>();
+    x.For<ILoggerFactory>().Use<LoggerFactory>();
 });
 
 return container;
@@ -109,18 +117,128 @@ The line for the `StatisticsReporter` is support for Pat's telemetry reporting a
 required in the future. Details on the statistics reporter are provided in the [telemetry](telemetry.html) 
 documentation.
 
-The `PatLiteRegistryBuilder` helper method configures the container for the Pat subscriber and its dependencies, 
-the `scanner.WithDefaultConventions();` tells StructureMap and therefore Pat where to find the handlers in our 
+The `scanner.WithDefaultConventions();` tells StructureMap and therefore Pat where to find the handlers in our 
 app. If we have handlers split across multiple projects we'll need to tell StructureMap about them. The 
 [StructureMap documentation](http://structuremap.github.io/quickstart/) covers that in more detail.
 
-The line for `IPatSenderLog` plugs in log4net as a logger, make sure to reference the `Pat.Sender.Log4Net` package and register your log4net `ILog` type as per below.
-
 N.B. For an example that uses .NET Core Logging, see [Hello World - .Net Core](hello-world-dotnetcore.html).
 
-This example uses log4net for Pat's internal logging.  To help visualize what's happening it's useful to add a console 
-appender for log4Net. To do this add `x.For<ILog>().Use(context => LogManager.GetLogger(context.ParentType));` 
-to our container setup. Create a new method `InitLogger` (below) and call the method from our `InitialiseIoC` before 
+In the above IoC setup, the .AddLogging(b => b.AddConsole()) line is configuring a Console log. The .AddDefaultPatLogger() line is provided for convenience and registers an implementation of ILogger with a category name of “Pat” to write to the providers that have been registered (e.g. here, the Console).
+
+## Bringing it all together.
+
+First we need to convert our Main method's signature to `async Task Main()`, for this we'll need to enable C# 
+7.1. This can be done by adding `<LangVersion>7.1</LangVersion>` to the `<PropertyGroup>` section in our 
+subscriber's csproj file.
+
+The main method needs to perform 3 actions:
+
+  1. Initialise the dependency resolution
+  2. Provide a way to shut down Pat
+  3. Start Pat.
+
+Initialising the dependency resolution is done by calling `InitialiseIoC`. This is done by adding the 
+following to our main method.
+
+```
+var serviceProvider = InitialiseIoC();
+```
+
+For a console app a nice way to enable shutdown is to listen for Ctrl+C and then gracefully shutdown. Since 
+Pat might be processing a message we will trigger the cancellation of a continuation token and allow Pat to 
+shutdown when it's ready. Pat can take up to a minute to shutdown, but if it's waiting on our handler this 
+may take longer. This is done by adding the following to our main method:
+
+```
+var tokenSource = new CancellationTokenSource();
+Console.CancelKeyPress += (sender, args) =>
+{
+    var log = serviceProvider.GetInstance<ILog>();
+    log.Info("Subscriber Shutdown Requested");
+    args.Cancel = true;
+    tokenSource.Cancel();
+};
+```
+
+Starting Pat is a case of creating an instance of the Pat Subscriber, initialising it and then listening for 
+messages. This is done by adding the following to our main method:
+
+```
+var subscriber = serviceProvider.GetInstance<Pat.Subscriber.Subscriber>();
+await subscriber.Initialise(new[] {Assembly.GetExecutingAssembly()});
+await subscriber.ListenForMessages(tokenSource);
+```
+
+## Creating the Subscription
+
+Now that our subscriber is complete we need to create a subscription on our service bus. This can be done 
+manually or via a tool. The [pat](pat-subscriber-tools.html) global tool does this for us. The tool requires
+that .Net Core 2.1.300 is installed.
+
+To install the Pat tooling run:
+
+```
+dotnet tool install -g Pat.Subscriber.Tools
+```
+
+Then in our prompt run (note some prompts need reopening before `pat` is available): 
+
+```
+pat create -n namespace -s PatExampleSubscriber -t pat
+```
+
+We need to replace `namespace` with the service bus namespace from our connection string.
+
+# Building the Publisher
+
+Publishing a message with Pat is somewhat simpler than subscribing to messages.
+
+We need to start by installing the latest versions of `Pat.Sender` and 
+`Microsoft.Extensions.DependencyInjection`.
+
+## Configuring the Publishers Dependency Resolution
+
+Setting up a new publisher without dependency resolution is entirely possible, but not recommended. Create a 
+new method `private static ServiceProvider InitialiseIoC()` in this we need to create the configuration for 
+our publisher. For this example we can use:
+
+```
+var sender = new PatSenderSettings
+{
+    TopicName = "pat",
+    // Use your own service bus connection string here
+    PrimaryConnection = ""Endpoint=sb://namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=YOURKEY";",
+    UseDevelopmentTopic = false
+};
+```
+
+For our service collection Pat requires a few classes to be configured. The `IMessagePublisher` is the 
+interface which we will use in our application. The concrete implementation of this requires a 
+[MessageSender](pat-sender.html#message-sender), a [MessageGenerator](pat-sender.html#message-generator), 
+[MessageProperties](pat-sender.html#message-properties) and [correlation 
+ids](pat-sender.html#correlation-id-provider). The details of which are explained on their specific 
+documentation pages. The simplest setup available is below (but please add logging as described in the next few sections):
+
+```
+var serviceProvider = new ServiceCollection()
+    .AddSingleton(sender)
+    .AddTransient<IMessagePublisher, MessagePublisher>()
+    .AddTransient<IMessageSender, MessageSender>()
+    .AddTransient<IMessageGenerator, MessageGenerator>()
+    .AddTransient(s => new MessageProperties(new LiteralCorrelationIdProvider($"{Guid.NewGuid()}")))
+    .BuildServiceProvider();
+
+return serviceProvider;
+```
+### Using log4Net in the Publisher
+For log4net logging, reference the `Pat.Sender.Log4Net` package and add IoC setup:
+
+```
+.AddSingleton<IPatSenderLog, PatSenderLog4NetAdapter>()
+.AddTransient(s => LogManager.GetLogger(s.GetType()))
+```
+
+It can be useful to add a console logger to visualize what's happening.  Create a new method `InitLogger` (below) and call the method from the IoC setup before 
 the setup of our service provider. We can now see what Pat is doing internally.
 
 ```
@@ -149,7 +267,7 @@ private static void InitLogger()
 
 ## Bringing it all together
 
-First we need to convert our Main methods signature to `async Task Main()`, for this we’ll need to enable C# 
+First we need to convert our Main method's signature to `async Task Main()`, for this we’ll need to enable C# 
 7.1. This can be done by adding `<LangVersion>7.1</LangVersion>` to the `<PropertyGroup>` section in our 
 subscriber’s csproj file.
 
