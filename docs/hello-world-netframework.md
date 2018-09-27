@@ -54,7 +54,7 @@ if it throws an exception then the message is simply dropped by Pat. The azure  
 message until the peek lock expires and the message will be received again by Pat. This will repeat until
 the max delivery count has exceeded, at which point the message is moved onto the dead letter queue.
 
-To show that our handler is receiving messages let's add some logging. Pat has a dependency on .NET Core Logging (`Microsoft.Extensions.Logging`). Add a new constructor with a parameter `ILogger log` to our handler, assign that to 
+To show that our handler is receiving messages let's add some logging. Pat has a dependency on .NET Core Logging (`Microsoft.Extensions.Logging`). Add a new constructor with a parameter `ILogger<FooHandler> log` to our handler, assign that to 
 an instance variable called `_log`. Now update our `HandleAsync` method to the following.
 
 ```
@@ -92,8 +92,7 @@ setup is:
 
 ```
 var services = new ServiceCollection()
-    .AddPatLite(subscriberConfiguration)
-    .AddDefaultPatLogger()
+    .AddPatLite(subscriberConfiguration)    
     .AddLogging(b => b.AddConsole());
     .AddHandlersFromAssemblyContainingType<FooHandler>();
 
@@ -123,7 +122,7 @@ app. If we have handlers split across multiple projects we'll need to tell Struc
 
 N.B. For an example that uses .NET Core Logging, see [Hello World - .Net Core](hello-world-dotnetcore.html).
 
-In the above IoC setup, the .AddLogging(b => b.AddConsole()) line is configuring a Console log. The .AddDefaultPatLogger() line is provided for convenience and registers an implementation of ILogger with a category name of “Pat” to write to the providers that have been registered (e.g. here, the Console).
+In the above IoC setup, the .AddLogging(b => b.AddConsole()) line is configuring a Console log.
 
 ## Bringing it all together.
 
@@ -153,7 +152,7 @@ may take longer. This is done by adding the following to our main method:
 var tokenSource = new CancellationTokenSource();
 Console.CancelKeyPress += (sender, args) =>
 {
-    var log = serviceProvider.GetInstance<ILog>();
+    var log = serviceProvider.GetInstance<ILogger<Program>>();
     log.Info("Subscriber Shutdown Requested");
     args.Cancel = true;
     tokenSource.Cancel();
