@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Pat.Subscriber;
 using Pat.Subscriber.StructureMap4DependencyResolution;
 using Pat.Subscriber.Telemetry.StatsD;
@@ -52,7 +51,6 @@ namespace Subscriber
                 });
 
                 x.AddRegistry(new PatLiteRegistryBuilder(subscriberConfiguration)
-                    .WithDefaultPatLogger()
                     .Build());
                 
                 x.For<IStatisticsReporter>().Use(new StatisticsReporter(new StatisticsReporterConfiguration()));

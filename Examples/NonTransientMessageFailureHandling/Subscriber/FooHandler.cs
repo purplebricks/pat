@@ -10,7 +10,7 @@ namespace Subscriber
     {
         private readonly ILogger _log;
 
-        public FooHandler(ILogger log)
+        public FooHandler(ILogger<FooHandler> log)
         {
             _log = log;
         }
