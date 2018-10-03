@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
-    <PackageReference Include="Pat.Sender.NetCoreLog" Version="3.0.17" />
+    <PackageReference Include="Pat.Sender.NetCoreLog" Version="4.0.18" />
   </ItemGroup>
   
   <ItemGroup>

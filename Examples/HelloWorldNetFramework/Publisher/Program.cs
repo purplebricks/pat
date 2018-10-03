@@ -49,7 +49,7 @@ namespace Publisher
 
                 x.For<ICorrelationIdProvider>().Use(new LiteralCorrelationIdProvider($"{Guid.NewGuid()}"));
                 x.For<PatSenderSettings>().Use(sender);
-                x.For<IPatSenderLog>().Use<PatSenderLog4NetAdapter>();
+                x.For(typeof(IPatSenderLog<>)).Use(typeof(PatSenderLog4NetAdapter<>));
                 x.For<ILog>().Use(context => LogManager.GetLogger(context.ParentType));
             });
 
