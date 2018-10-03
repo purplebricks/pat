@@ -41,7 +41,7 @@ namespace Publisher
 
             var serviceProvider = new ServiceCollection()
                 .AddPatSender(settings)
-                .AddNetCoreLogging()
+                .AddLogging(b => b.AddConsole())
                 .BuildServiceProvider();
 
             return serviceProvider;
@@ -49,16 +49,12 @@ namespace Publisher
 
         private static IServiceCollection AddPatSender(this IServiceCollection services, PatSenderSettings settings)
             => services
+                .AddPatSenderNetCoreLogAdapter()
                 .AddSingleton(settings)
                 .AddTransient<IMessagePublisher, MessagePublisher>()
                 .AddTransient<IMessageSender, MessageSender>()
                 .AddTransient<IMessageGenerator, MessageGenerator>()
                 .AddTransient(s => new MessageProperties(new LiteralCorrelationIdProvider($"{Guid.NewGuid()}")));
 
-        private static IServiceCollection AddNetCoreLogging(this IServiceCollection services)
-            => services
-                .AddTransient<IPatSenderLog, PatSenderNetCoreLogAdapter>()
-                .AddLogging(b => b.AddConsole())
-                .AddSingleton(s => s.GetRequiredService<ILoggerFactory>().CreateLogger("Publisher"));
     }
 }
