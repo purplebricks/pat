@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Contract;
 using Microsoft.Extensions.Logging;
 using Pat.Subscriber;
@@ -13,11 +13,11 @@ namespace Subscriber
         {
             _log = log;
         }
-
-        public Task HandleAsync(Foo @event)
+        
+        public async Task HandleAsync(Foo @event)
         {
-            _log.LogInformation($"Handling: {@event}");
-            return Task.CompletedTask;
+            _log.LogInformation("Handling: {event}", @event);
+            await Task.CompletedTask;
         }
     }
 }

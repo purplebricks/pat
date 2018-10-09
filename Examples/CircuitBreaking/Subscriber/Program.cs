@@ -11,21 +11,21 @@ using Pat.Subscriber.Telemetry.StatsD;
 
 namespace Subscriber
 {
-    internal static class Program
+    internal class Program
     {
         private static async Task Main()
         {
             var serviceProvider = InitialiseIoC();
-
+            
             var tokenSource = new CancellationTokenSource();
             Console.CancelKeyPress += (sender, args) =>
             {
-                var log = serviceProvider.GetService<ILogger>();
+                var log = serviceProvider.GetService<ILogger<Program>>();
                 log.LogInformation("Subscriber Shutdown Requested");
                 args.Cancel = true;
                 tokenSource.Cancel();
             };
-
+            
             var subscriber = serviceProvider.GetService<Pat.Subscriber.Subscriber>();
             await subscriber.Initialise(new[] { Assembly.GetExecutingAssembly() });
             await subscriber.ListenForMessages(tokenSource);
