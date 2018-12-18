@@ -1,0 +1,1 @@
+start dotnet Subscriber2\bin\Debug\netcoreapp2.1\Subscriber2.dll

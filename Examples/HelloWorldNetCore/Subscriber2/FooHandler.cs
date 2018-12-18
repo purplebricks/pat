@@ -19,6 +19,7 @@ namespace Subscriber
         {
             Console.WriteLine(DateTime.Now);
             _log.LogInformation("Handling: {event}", @event);
+            throw new Exception("Blow up lol");
             await Task.CompletedTask;
         }
     }

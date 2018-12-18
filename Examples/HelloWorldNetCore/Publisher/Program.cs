@@ -17,20 +17,27 @@ namespace Publisher
             var serviceProvider = InitialiseIoC();
 
             var publisher = serviceProvider.GetService<IMessagePublisher>();
+            var logger = serviceProvider.GetService<ILogger<Foo>>();
 
-            await publisher.PublishEvent(new Foo());
+            for (var i = 0; i < 200000; i++)
+            {
+                await publisher.PublishEvent(new Foo());
+                logger.LogDebug("Logged {count}", i);
+                Console.WriteLine(i + " : " + DateTime.Now);
+            }
+            
         }
 
         private static ServiceProvider InitialiseIoC()
         {
-            var connection = "Endpoint=sb://namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=YOURKEY";
+            var connection = "";
             var topicName = "pat";
 
             var settings = new PatSenderSettings
             {
                 TopicName = topicName,
                 PrimaryConnection = connection,
-                UseDevelopmentTopic = false
+                UseDevelopmentTopic = true
             };
 
             var serviceProvider = new ServiceCollection()
