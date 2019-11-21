@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pat.Subscriber;
 using Pat.Subscriber.NetCoreDependencyResolution;
@@ -10,48 +8,23 @@ using Pat.Subscriber.Telemetry.StatsD;
 
 namespace Subscriber
 {
-    internal class Program
+    public class Program
     {
-        private static async Task Main()
+        public static void Main(string[] args)
         {
-            var serviceProvider = InitialiseIoC();
-            
-            var tokenSource = new CancellationTokenSource();
-            Console.CancelKeyPress += (sender, args) =>
-            {
-                var log = serviceProvider.GetService<ILogger<Program>>();
-                log.LogInformation("Subscriber Shutdown Requested");
-                args.Cancel = true;
-                tokenSource.Cancel();
-            };
-            
-            var subscriber = serviceProvider.GetService<Pat.Subscriber.Subscriber>();
-            await subscriber.Initialise(new[] { Assembly.GetExecutingAssembly() });
-            await subscriber.ListenForMessages(tokenSource);
+            CreateHostBuilder(args).Build().Run();
         }
 
-        private static ServiceProvider InitialiseIoC()
-        {
-            var connection = "Endpoint=sb://namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=YOURKEY";
-            var topicName = "pat";
-
-            var subscriberConfiguration = new SubscriberConfiguration
-            {
-                ConnectionStrings = new[] {connection},
-                TopicName = topicName,
-                SubscriberName = "PatExampleSubscriber",
-                UseDevelopmentTopic = false
-            };
-
-            var serviceProvider = new ServiceCollection()
-                .AddPatLite(subscriberConfiguration)
-                .AddLogging(b => b.AddConsole())
-                .AddTransient<IStatisticsReporter, StatisticsReporter>()
-                .AddSingleton(new StatisticsReporterConfiguration())
-                .AddHandlersFromAssemblyContainingType<FooHandler>()
-                .BuildServiceProvider();
-
-            return serviceProvider;
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddHostedService<Worker>()
+                        .AddPatLite(hostContext.Configuration.GetSection("Pat").Get<SubscriberConfiguration>())
+                        .AddLogging(b => b.AddConsole())
+                        .AddSingleton<IStatisticsReporter, StatisticsReporter>()
+                        .AddSingleton<StatisticsReporterConfiguration>()
+                        .AddHandlersFromAssemblyContainingType<FooHandler>();
+                });
     }
 }
