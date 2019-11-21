@@ -1,0 +1,15 @@
+﻿{
+  "profiles": {
+    "Subscriber": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Watch-Subscriber": {
+      "commandName": "Executable",
+      "executablePath": "dotnet",
+      "commandLineArgs": "watch -p ../../.. run"
+    }
+  }
+}
